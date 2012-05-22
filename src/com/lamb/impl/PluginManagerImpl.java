@@ -5,12 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
 
 import com.lamb.events.BaseEventDispatcher;
 import com.lamb.plugin.Plugin;
@@ -18,7 +12,7 @@ import com.lamb.plugin.PluginInfo.PluginPriority;
 import com.lamb.plugin.PluginManager;
 import com.lamb.utils.FastArrayList;
 
-public class PluginManagerImpl extends BaseEventDispatcher implements PluginManager, Externalizable {
+class PluginManagerImpl extends BaseEventDispatcher implements PluginManager, Externalizable {
 
 	private FastArrayList<PluginLoaderInfo> mPlugins = new FastArrayList<PluginLoaderInfo>();
 	private FastArrayList<Plugin> mLoadedPlugins = new FastArrayList<Plugin>();
@@ -35,7 +29,6 @@ public class PluginManagerImpl extends BaseEventDispatcher implements PluginMana
 	@Override
 	public void removePluginDir(File arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	@Override
