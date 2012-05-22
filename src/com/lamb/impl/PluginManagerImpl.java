@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,7 +22,7 @@ class PluginManagerImpl extends BaseEventDispatcher implements PluginManager {
 	private HashMap<String, PluginLoaderInfo> mPlugins = new HashMap<String, PluginLoaderInfo>(5000);
 	private HashMap<String, Plugin> mLoadedPlugins = new HashMap<String, Plugin>(1000);
 	
-	private HashMap<String, ClassInfo> mClasses = new HashMap<String, ClassInfo>();
+	protected HashMap<String, ClassInfo> mClasses = new HashMap<String, ClassInfo>();
 	
 	public PluginManagerImpl() {
 	}
@@ -115,9 +116,16 @@ class PluginManagerImpl extends BaseEventDispatcher implements PluginManager {
 	
 	private static void findSourceFiles(ArrayList<File> target, File dir) {
 		File[] files = dir.listFiles();
+		if (files == null){
+			return;
+		}
 		for (int i = files.length; i >= 0; i--) {
 			File file = files[i];
-			file.getName().endsWith(".java");
+			if (file.getName().endsWith(".java") && file.isFile()) {
+				target.add(file);
+			} else if (file.isDirectory()) {
+				findSourceFiles(target, file);
+			}
 		}
 	}
 	
@@ -127,9 +135,19 @@ class PluginManagerImpl extends BaseEventDispatcher implements PluginManager {
 	
 	private class PluginClassLoader extends ClassLoader {
 		
+		public PluginClassLoader() {
+			super(PluginClassLoader.class.getClassLoader());
+			
+		}
+		
 		@Override
 		protected Class<?> findClass(String name) throws ClassNotFoundException {
-			// TODO Auto-generated method stub
+			
+			ClassInfo classInfo = mClasses.get(name);
+			if (classInfo != null) {
+				
+			}
+			
 			return super.findClass(name);
 		}
 	}
@@ -160,6 +178,7 @@ class PluginManagerImpl extends BaseEventDispatcher implements PluginManager {
 		public String className;
 		public File src;
 		public File classCache;
+		public WeakReference<Class<?>> clazzRef;
 		
 		@Override
 		public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
