@@ -1,12 +1,13 @@
 package com.lamb.plugin;
 
 import java.io.File;
+import java.io.IOException;
 
 import com.lamb.events.EventDispatcher;
 
 public interface PluginManager extends EventDispatcher {
 
-	public void addPluginDir(File dir);
+	public void addPluginDir(File dir) throws IOException;
 	public void removePluginDir(File dir);
 	
 	public Plugin startPlugin(String name);
